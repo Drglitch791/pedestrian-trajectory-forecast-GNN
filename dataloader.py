@@ -32,9 +32,24 @@ class TrajectoryDataset(Dataset):
 
 		for path in all_files:
 			# all entries of this file
-			data = read_file(path, delim)
-			print(data)
-
+			csv_data = read_file(path, delim)
+			frames = np.sort(np.unique(csv_data[:,0]))
+			snapshots = []
+			for frame in frames:
+				frame_data = csv_data[csv_data[:, 0]==frame]
+				x = torch.tensor(frame_data[:, 1:])
+				edge_index = []
+				lenx = len(x)
+				for i in range(lenx):
+					for j in range(lenx):
+						edge_index.append([i,j])
+				edge_index = torch.tensor(edge_index)
+				data = Data(
+					x=x,
+					edge_index=edge_index,
+				)
+				snapshots.append(data)
+			print(snapshots)
 
 	def __len__(self):
 		pass
