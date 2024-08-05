@@ -4,9 +4,9 @@ import numpy as np
 from itertools import cycle
 
 import torch
-# from torch.utils.data import Dataset
+from torch.utils.data import Dataset
 
-# from torch_geometric.data import Data
+from torch_geometric.data import Data
 
 
 def read_file(_path, delim='\t'):
@@ -75,8 +75,8 @@ class TrajectoryDataset(Dataset):
 		for i in range(lenX):
 			for j in range(lenX):
 				edge_index.append([i,j])
-		# data = Data(
-		# 	x=torch.permute(torch.tensor(self.X[idx]), (0,2,1)), 
-		# 	y=torch.permute(torch.tensor(self.Y[idx]), (0,2,1)), 
-		# 	edge_index=torch.tensor(edge_index).T)
+		data = Data(
+			x=torch.permute(torch.tensor(self.X[idx]), (0,2,1)), 
+			y=torch.permute(torch.tensor(self.Y[idx]), (0,2,1)), 
+			edge_index=torch.tensor(edge_index).T)
 		return data
