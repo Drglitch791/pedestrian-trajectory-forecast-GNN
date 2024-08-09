@@ -20,7 +20,7 @@ def read_file(_path, delim='\t'):
 	return np.asarray(data)
 
 class TrajectoryDataset(Dataset):
-	def __init__(self, data_dir, obs_len=8, pred_len=12, skip=1, min_peds=1, max_peds=5, delim='\t'):
+	def __init__(self, data_dir, obs_len=8, pred_len=12, skip=1, min_peds=1, max_peds=10, delim='\t'):
 		super(TrajectoryDataset, self).__init__()
 
 		'''contains all sequence
@@ -100,13 +100,13 @@ class TrajectoryDataset(Dataset):
 		self.sequence_targets = []
 
 		for seqidx, seq in enumerate(sequence_list):
+			seq = seq[:max_peds]
 			if not len(seq) > 0:
 				continue
 			graphs_in_sequence = []
 			for frmidx, frm in enumerate(range(self.obs_len)):
 				features_x = torch.zeros((max_peds, 2))
 				for pedidx, ped in enumerate(seq):
-					# print(frmidx, seq)
 					features_x[pedidx, : ] = torch.tensor([ped[0][frmidx], ped[1][frmidx]])
 					edge_indices = []
 					for e1 in range(len(seq)):
@@ -116,6 +116,7 @@ class TrajectoryDataset(Dataset):
 			self.sequence_graphs.append(graphs_in_sequence)
 		
 		for seqidx, seq in enumerate(sequence_list):
+			seq = seq[:max_peds]
 			if not len(seq) > 0:
 				continue
 			peds_targets_in_seq = []
@@ -128,5 +129,5 @@ class TrajectoryDataset(Dataset):
 	def __len__(self):
 		return self.num_seq
 	
-	def __getitem__(self, index):
+	def __getitem__(self, index):	
 		return self.sequence_graphs[index], self.sequence_targets[index]
